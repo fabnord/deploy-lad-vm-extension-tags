@@ -1,0 +1,21 @@
+{
+    "tagName": {
+        "type": "string"
+    },
+    "tagValue": {
+        "type": "string"
+    },
+    "diagnosticStorageAccountName": {
+        "type": "string"
+    },
+    "diagnosticStorageAccountSasToken": {
+        "type": "string"
+    },
+    "eventHubSasToken": {
+        "type": "string",
+        "metadata": {
+            "displayName": "EventHub Shared Access Signature Token",
+            "description": "The Shared Access Signature Token for EventHub used to authenticate and send data."
+        }
+    }
+}
