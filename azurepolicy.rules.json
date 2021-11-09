@@ -2,16 +2,32 @@
     "mode": "Indexed",
     "parameters": {
         "tagName": {
-            "type": "String"
+            "type": "String",
+            "metadata": {
+                "displayName": "Name of the Tag",
+                "description": "Name of the tag used to apply the Policy."
+            }
         },
         "tagValue": {
-            "type": "String"
+            "type": "String",
+            "metadata": {
+                "displayName": "Value of the Tag",
+                "description": "Value of the tag used to apply the Policy."
+            }
         },
         "diagnosticStorageAccountName": {
-            "type": "String"
+            "type": "String",
+            "metadata": {
+                "displayName": "Name of the diagnostic storage account",
+                "description": "Name of the storage account used to store diagnostic data."
+            }
         },
-        "diagnosticStorageAccountSasToken": {
-            "type": "String"
+        "diagnosticStorageAccountResourceGroup": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Name of the resource group of the diagnostic storage account",
+                "description": "Name of the resource group containing the diagnostic storage account."
+            }
         },
         "eventHubSasToken": {
             "type": "String",
@@ -43,7 +59,8 @@
             "details": {
                 "type": "Microsoft.Compute/virtualMachines/extensions",
                 "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c"
+                    "/providers/Microsoft.Authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c",
+                    "/providers/Microsoft.Authorization/roleDefinitions/17d1049b-9a84-46fb-8f53-869881c3d3ab"
                 ],
                 "deployment": {
                     "properties": {
@@ -61,8 +78,8 @@
                             "diagnosticStorageAccountName": {
                                 "value": "[parameters('diagnosticStorageAccountName')]"
                             },
-                            "diagnosticStorageAccountSasToken": {
-                                "value": "[parameters('diagnosticStorageAccountSasToken')]"
+                            "diagnosticStorageAccountResourceGroup": {
+                                "value": "[parameters('diagnosticStorageAccountResourceGroup')]"
                             },
                             "eventHubSasToken": {
                                 "value": "[parameters('eventHubSasToken')]"
@@ -84,8 +101,17 @@
                                 "diagnosticStorageAccountName": {
                                     "type": "string"
                                 },
-                                "diagnosticStorageAccountSasToken": {
+                                "diagnosticStorageAccountResourceGroup": {
                                     "type": "string"
+                                },
+                                "diagnosticStorageAccountSasProperties": {
+                                    "type": "object",
+                                    "defaultValue": {
+                                        "signedServices": "bt",
+                                        "signedPermission": "acluw",
+                                        "signedExpiry": "[dateTimeAdd(utcNow('u'), 'P1Y')]",
+                                        "signedResourceTypes": "co"
+                                    }
                                 },
                                 "eventHubSasToken": {
                                     "type": "string"
@@ -111,8 +137,8 @@
                                         "autoUpgradeMinorVersion": true,
                                         "protectedSettings": {
                                             "storageAccountName": "[parameters('diagnosticStorageAccountName')]",
-                                            "storageAccountSasToken": "[parameters('diagnosticStorageAccountSasToken')]",
-                                            "sinksConfig": {
+                                            "storageAccountSasToken": "[listAccountSas(resourceId(parameters('diagnosticStorageAccountResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('diagnosticStorageAccountName')), '2021-04-01', parameters('diagnosticStorageAccountSasProperties')).accountSasToken]",
+                                                "sinksConfig": {
                                                 "sink": [
                                                     {
                                                         "name": "[variables('eventHubSinkName')]",
@@ -121,6 +147,10 @@
                                                     },
                                                     {
                                                         "name": "JsonSink",
+                                                        "type": "JsonBlob"
+                                                    },
+                                                    {
+                                                        "name": "FileLogsJsonBlob",
                                                         "type": "JsonBlob"
                                                     }
                                                 ]
@@ -836,7 +866,13 @@
                                                         "AzureMonitor": {}
                                                     }
                                                 ]
-                                            }
+                                            },
+                                            "fileLogs": [
+                                                {
+                                                    "file": "/var/log/samplelog",
+                                                    "sinks": "EventHubSink,FileLogsJsonBlob"
+                                                }
+                                            ]
                                         }
                                     }
                                 }

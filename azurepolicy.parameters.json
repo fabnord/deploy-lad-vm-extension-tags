@@ -1,18 +1,34 @@
 {
     "tagName": {
-        "type": "string"
+        "type": "String",
+        "metadata": {
+            "displayName": "Name of the Tag",
+            "description": "Name of the tag used to apply the Policy."
+        }
     },
     "tagValue": {
-        "type": "string"
+        "type": "String",
+        "metadata": {
+            "displayName": "Value of the Tag",
+            "description": "Value of the tag used to apply the Policy."
+        }
     },
     "diagnosticStorageAccountName": {
-        "type": "string"
+        "type": "String",
+        "metadata": {
+            "displayName": "Name of the diagnostic storage account",
+            "description": "Name of the storage account used to store diagnostic data."
+        }
     },
-    "diagnosticStorageAccountSasToken": {
-        "type": "string"
+    "diagnosticStorageAccountResourceGroup": {
+        "type": "String",
+        "metadata": {
+            "displayName": "Name of the resource group of the diagnostic storage account",
+            "description": "Name of the resource group containing the diagnostic storage account."
+        }
     },
     "eventHubSasToken": {
-        "type": "string",
+        "type": "String",
         "metadata": {
             "displayName": "EventHub Shared Access Signature Token",
             "description": "The Shared Access Signature Token for EventHub used to authenticate and send data."
